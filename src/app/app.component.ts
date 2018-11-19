@@ -7,33 +7,45 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit {
   title = 'Timeline';
-
+  state = {
+    traffic: {}
+};
   ngOnInit() {
 
-    chrome.runtime.onMessage.addListener(
-      function (request, sender, sendResponse) {
-        // listen for messages sent from background.js
-        if (request.message === 'hello!') {
-          console.log(request.url) // new url is now in content scripts!
-        }
-      });
+    // chrome.runtime.onMessage.addListener(
+    //   function (request, sender, sendResponse) {
+    //     // listen for messages sent from background.js
+    //     if (request.message === 'hello!') {
+    //       console.log(request.url) // new url is now in content scripts!
+    //     }
+    //   });
   }
 
   chromeConnect() {
-
-    chrome.runtime.onMessage.addListener(
-      function (request, sender, sendResponse) {
-        // listen for messages sent from background.js
-        if (request.message === 'hello!') {
-          console.log(request.url) // new url is now in content scripts!
-        }
+    debugger;
+    this.getCurrentTab((tab) => {
+      chrome.runtime.sendMessage({type: 'popupInit', tabId: tab.id}, (response) => {
+          if (response) {
+              this.state = {
+                  traffic: Object.assign(this.state.traffic, response)
+              };
+          }
       });
 
+      console.log(this.state);
+  });
 
-    // chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    //   const port = chrome.tabs.connect(tabs[0].id, { name: "channelName" });
-    //   port.postMessage({ url: tabs[0].url });
-    // }    );
+
   }
+
+  getCurrentTab(callback) {
+    chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    },
+    (tabs) => {
+        callback(tabs[0]);
+    });
+}
 }
 

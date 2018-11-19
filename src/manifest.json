@@ -15,8 +15,11 @@
 
   "permissions": [
     "tabs",
-    "activeTab"
-
+    "activeTab",
+    "webRequest",
+    "*://*.google.com/",
+    "*://*.sirius.test.titlex.com.au/",
+    "storage"
     ],
 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
